@@ -52,6 +52,10 @@ nav:
     - 开发流程: getting-started/development-process.md 
   - DDD原则: rules-of-ddd/rules-of-ddd.md
   - 关于AI: about-ai.md
+  - 业务时序图:
+    - 处理用户 Http 请求: sequence-diagram/handle-user-request.md
+    - 处理领域事件: sequence-diagram/domain-event-handler.md
+    - 处理集成事件: sequence-diagram/integration-event-handler.md
   - 领域层:
     - 强类型ID: domain/strong-typed-id.md
     - 领域模型: domain/domain-entity.md
