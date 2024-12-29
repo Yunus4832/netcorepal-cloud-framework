@@ -1,0 +1,1525 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A tactical framework for Domain-Driven Design based on ASP.NET Core.">
+      
+      
+        <meta name="author" content="NetCorePal">
+      
+      
+        <link rel="canonical" href="https://netcorepal.github.io/netcorepal-cloud-framework/sequence-diagram/handle-user-request/">
+      
+      
+        <link rel="prev" href="../../about-ai/">
+      
+      
+        <link rel="next" href="../domain-event-handler/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>处理用户 Http 请求 - netcorepal-cloud-framework</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#http" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="netcorepal-cloud-framework" class="md-header__button md-logo" aria-label="netcorepal-cloud-framework" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            netcorepal-cloud-framework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              处理用户 Http 请求
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/netcorepal/netcorepal-cloud-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="netcorepal-cloud-framework" class="md-nav__button md-logo" aria-label="netcorepal-cloud-framework" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    netcorepal-cloud-framework
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/netcorepal/netcorepal-cloud-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    入门
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            入门
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建项目
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/project-structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    项目结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/development-process/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    开发流程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rules-of-ddd/rules-of-ddd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDD原则
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about-ai/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    关于AI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    业务时序图
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            业务时序图
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    处理用户 Http 请求
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    处理用户 Http 请求
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户 Query 请求
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../domain-event-handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    处理领域事件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integration-event-handler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    处理集成事件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    领域层
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            领域层
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../domain/strong-typed-id/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    强类型ID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../domain/domain-entity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    领域模型
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../domain/domain-event/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    领域事件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../domain/integration-converter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    集成事件转换器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ID生成器
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            ID生成器
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../id-generator/snowflake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Snowflake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../id-generator/etcd-worker-id-generator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Etcd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据访问
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            数据访问
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data/repository/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    仓储
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data/unit-of-work/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    UnitOfWork
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transaction/transactions.md" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    事务处理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    服务发现
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            服务发现
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service-discovery/service-discovery-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    服务发现客户端
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service-discovery/k8s-service-discovery-provider/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kubernetes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    上下文传递
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            上下文传递
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/context-accessor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    上下文访问器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/aspnetcore-context-processor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AspNetCore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/cap-context-processor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    并发控制
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            并发控制
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concurrency/row-version/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    乐观锁-行版本号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concurrency/redis-lock/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    悲观锁-Redis锁
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    多环境
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            多环境
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../env/env-context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    环境上下文
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../env/env-service-selector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    环境服务选择器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../env/env-cap-subscribe-filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CAP环境事件订阅器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AspNetCore扩展
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            AspNetCore扩展
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aspnetcore/exception-handling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    异常处理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aspnetcore/response-data/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    数据响应
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#query" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户 Query 请求
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="http">处理用户 Http 请求<a class="headerlink" href="#http" title="Permanent link">&para;</a></h1>
+<p>框架采用命令查询职责分离 (即 CQRS) 的模式处理用户请求，因此对于用户的请求被划分为两类 <code>Query</code> 和 <code>Command</code>。两者处理的复杂度往往存在巨大的差异。**查询**由于不涉及数据变更，通常不对其进行抽象处理，在某些简单的场景中甚至可以直截了当的在 <code>Controller</code> 中注入并使用 <code>DbContext</code> 实现数据查询；**命令**往往伴随的复杂的业务逻辑和数据变更，因此需要更加谨慎的处理，命令的复杂度来自于不同业务模型之间隐含的关系以及对与数据一致性的要求，框架框架对命令单独抽象出一个接口 <code>ICommand&lt;T&gt;</code> 使用事件驱动处理 <code>Command</code> 中涉及的复杂的数据变更。以下是一些示例和说明。</p>
+<h2 id="query">用户 Query 请求<a class="headerlink" href="#query" title="Permanent link">&para;</a></h2>
+<p>对于 Query 请求, 下列是一个最简单的实现查询的示例。 该示例中, <code>ApplicationDbContext</code> 被直接注入到了 <code>Controller</code> 中，并且直接使用 <code>Linq</code> 实现了数据查询。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// OrderController 订单相关 API</span>
+<span class="na">[ApiController]</span>
+<span class="na">[Route(&quot;order&quot;)]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">OrderController</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[HttpGet]</span>
+<span class="w">    </span><span class="na">[Route(&quot;{id}&quot;)]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">OrderResp</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Detail</span><span class="p">(</span>
+<span class="w">        </span><span class="na">[FromQuery]</span><span class="w"> </span><span class="n">OrderId</span><span class="w"> </span><span class="n">orderId</span><span class="p">,</span>
+<span class="w">        </span><span class="na">[FromServices]</span><span class="w"> </span><span class="n">ApplicationDbContext</span><span class="w"> </span><span class="n">dbContext</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">dbContext</span><span class="p">.</span><span class="n">Orders</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">orderId</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OrderResp</span><span class="p">(</span><span class="n">order</span><span class="p">.</span><span class="n">Id</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="n">OrderCode</span><span class="p">))</span>
+<span class="w">            </span><span class="p">.</span><span class="n">FirstOrDefaultAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>在 <code>Controller</code> 中直接使用 <code>DbContext</code> 适用于简单并且追求快速实现的场景中，如果一个 <code>Controller</code> 中定义的大量的查询 API, <code>Controller</code> 中的代码会变得杂乱，<code>Controller</code> 的职责也变得模糊。更加推荐的做法是将所有的对于同个模型或实体的相关查询集中到一个类中，<code>Controller</code> 直接使用该类获取查询的数据，该类在框架中被定义为 <code>Query</code>, 它并不是强制的，但是会是代码更加清晰，也更方便相同查询逻辑的复用(关于查询的原则，后续会进一步说明。一般情况下， 查询往往是特定与某个场景的，查询复用的情况应当避免，因为复用会使得多个场景的逻辑交织在一起，后续难以维护，其中最重要的一个原则是**按需提供**)，示例代码如下。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// OrderController 订单相关 API</span>
+<span class="na">[ApiController]</span>
+<span class="na">[Route(&quot;order&quot;)]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">OrderController</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[HttpGet]</span>
+<span class="w">    </span><span class="na">[Route(&quot;{id}&quot;)]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">OrderResp</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Detail</span><span class="p">(</span>
+<span class="w">        </span><span class="na">[FromQuery]</span><span class="w"> </span><span class="n">OrderId</span><span class="w"> </span><span class="n">orderId</span><span class="p">,</span>
+<span class="w">        </span><span class="na">[FromServices]</span><span class="w"> </span><span class="n">OrderQuery</span><span class="w"> </span><span class="n">query</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">Detail</span><span class="p">(</span><span class="n">orderId</span><span class="p">:</span><span class="w"> </span><span class="n">orderId</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// OrderQuery 使用主构造函数注入 DbContext</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">OrderQuery</span><span class="p">(</span><span class="n">ApplicationDbContext</span><span class="w"> </span><span class="n">dbContext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">OrderResp</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Detail</span><span class="p">(</span><span class="n">OrderId</span><span class="w"> </span><span class="n">orderId</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">dbContext</span><span class="p">.</span><span class="n">Orders</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="n">Id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">orderId</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OrderResp</span><span class="p">(</span><span class="n">order</span><span class="p">.</span><span class="n">Id</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">.</span><span class="n">OrderCode</span><span class="p">))</span>
+<span class="w">            </span><span class="p">.</span><span class="n">FirstOrDefaultAsync</span><span class="p">();</span>
+
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>上述代码将查询逻辑单独组织到 <code>OrderQuery</code> 中，并在 <code>Controller</code> 中直接使用，这是处理一个查询请求的典型用法。在框架中，查询的时序图如下所示：</p>
+<p><img alt="查询时序图" src="../../img/query.png" /></p>
+<p>对于更加复杂的情况，例如查询的结果涉及多个实体模型信息的组合，有两种处理方式：</p>
+<ul>
+<li>使用多个相关的 <code>Query</code> 对象获取查询到的数据，然后组装到请求响应中; </li>
+<li>修改模型，使模型本身能够 满足查询需求, 这往往涉及在模型中复制其他模型的属性或字段（有人会觉得这是一种冗余，但这往往是简化代码实现 DDD 领域隔离的关键）。</li>
+</ul>
+<p>在实际情况中，更加推荐使用后者。有以下原因：</p>
+<ul>
+<li><strong>模型应当反应真实的需求</strong>，如果模型无法快速的实现需求，极有可能是模型设计的不合理; </li>
+<li>也是为了简单，当模型能够满足需求时，查询的实现逻辑将水到渠成，顺畅自然; </li>
+<li>模型之间的解耦，由于模型中包含其他模型属性的的复制, 相当于模型本身包含了另一个模型的快照，“快照” 对应的模型变更之前，查询获取的数据都是   快照的数据。两个模型的数据相互隔离，使得模型更加独立，避免了模型之间建立的**耦合关系**。</li>
+</ul>
+<p>这可能会导致数据一致性的问题，例如，“快照” 对应的模型发生了数据变更，模型的快照数据也应当一同变更，数据同步需要付出额外的代价。但是这并不是查询需要考虑的问题，那是命令（Command）需要做的。以下是一个典型的例子, 通讯录模型：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Person 模型</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Person</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="c1">// 名称</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Name</span><span class="w"> </span><span class="p">{</span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 手机号</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Phone</span><span class="w"> </span><span class="p">{</span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 年龄</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Age</span><span class="w"> </span><span class="p">{</span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="n">privaet</span><span class="w"> </span><span class="k">set</span><span class="p">;}</span>
+
+<span class="w">    </span><span class="c1">// 通讯录 (Name, Phone)</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">AddressBook</span><span class="w"> </span><span class="p">{</span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">();</span><span class="w"> </span>
+<span class="p">}</span>
+</code></pre></div>
+<p>每个人都有自己的名称和手机号，同时每个人也存有一份包含其他人信息的通讯录。这个模型是非常自然的，当我们需要呼叫某人，我们第一反应是在我们自己的通讯录中查询该人的手机号，然后呼叫。这份通讯录便是模型所反映的真实的需求, 当某人的手机号变更之后，其他人不知道他的手机号发生了变更，需要他主动通知所有人，然后其他人更新其通讯录中的信息。我们假设每个人都没有这一份通讯录，会发生什么呢？ 那么必然需要存在一个中心化的机构提供手机号查询服务，每当我们想要呼叫某人时，我们需要先询问该机构呼叫目标的手机号，然后呼叫。而该机构也会维护一个巨大的通讯录，并且付出高额的成本去保证通讯录的正确性。而一旦该机构出现问题，所有人都无法使用电话了, 根本原因是所有人都强依赖了该机构，也就是说，每个人都与该机构建立了耦合关系。这是一个在建模方面的简单例子，非常的浅显。在建模的时候，许多人会掉入到 “冗余” 的陷阱，认为某些字段或属性是冗余的，使模型偏离了实际的场景。</p>
+<p>上面提到查询应当遵循一定的原则，现在对这些原则进行详细说明：</p>
+<ul>
+<li>查询应当**场景化**，一个查询场景对应一个查询，避免复用;</li>
+<li>查询应当**按需提供**，不提供该查询场景中无用的信息;</li>
+<li>查询应当保证自身的**简单性**;</li>
+</ul>
+<p>查询场景化，以及查询按需提供往往是保证查询简单的关键。而查询的简单是提高代码可维护型的关键。</p>
+<p>那么场景化和按需提供是什么意思呢。这里说的场景是指用户所处的环境，按需提供则是只提供在该场景下需要的数据。许多人受到 Restful 风格的 API 的影响，设计的 API 往往背离了这两个原则。Restful 风格的 API 是面向资源的，这在资源相对稳定，不易发生变化的情况下是合适的。但在业务系统中，需求千变万化，Restful 风格的 API 是往往是不适用的。例如，Restful 风格的 API 倡导把所有数据当成资源返回给用户，由用户判断和筛选需要那些资源获取相应的信息。这使得一个资源需要应当大量的场景，不同场景往往携带不同的筛选条件以及数据要求，这些最终都会转化成查询请求中的参数，当新的需求查询不满足时，只能增加新的参数。久而久之，查询逻辑变得异常复杂，不可维护。因此，我们在业务系统中应当摒弃 Restful 风格的 API, 保持上述原则。</p>
+<p>关于场景化，举一些例子:</p>
+<ul>
+<li>业务系统中往往区分前台和后台，这便是两个典型的不同的场景，用户处于不同的环境，获取的信息往往也是不同的，因此应当设计不同的查询接口。</li>
+<li>用户需要查看某类对象的列表，以及用户需要从某个对象的列表中选择一个对象，也是不同的场景，前者往往对于于分页查询，展示的数据往往是一个对象的   摘要，后者可能只需要对象的 Id 属性，应当设计不同的接口。</li>
+<li>如果是涉及多个微服务组成的系统，其他服务查询信息，和前后台查询信息，也往往是不同的场景，应当设计不同的接口。</li>
+</ul>
+<p>这些例子要求区分场景设计不同的接口，看似增加了工作量，实际上刚好相反，这样的设计能够大大减少工作量，提高开发效率。这是因为，区分场景使得实现查询非常简单，对于特定的场景，不需要考虑其他因素，查询往往是自然而然的。而当需求发生变化时，修改逻辑也只针对一个场景，也更加得心应手，方便测试。假设不是这样，多个场景糅合到一起，修改的不确定性将会随着时间指数上升，不仅不利于维护，也不利于测试，一个修改往往需要花费大量时间和精力在调试和测试上。</p>
+<p>关于按需提供，这样不仅可以不保证数据的安全，也能减轻用户的负担。这里所指的用户往往是前端的开发人员，过多的信息往往会给用户造成迷惑，并且使得接口职责变得不清晰。</p>
+<p>查询的简单性使得查询的成本变得非常的低，新增或废弃一个查询是十分容易的。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024 NetCorePal
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
